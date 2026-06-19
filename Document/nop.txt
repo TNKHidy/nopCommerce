@@ -1,0 +1,25 @@
+1.公式サイト
+https://www.nopcommerce.com/
+2.公式ドキュメント
+https://docs.nopcommerce.com/en/index.html
+重要項目
+・Installation Guide
+・Administration
+・Developers Guide
+・Plugins
+・Scheduled Tasks
+・Data Access
+3.開発ドキュメント
+https://docs.nopcommerce.com/en/developer/
+読むべき項目
+・Architecture of nopCommerce
+・Dependency Injection
+・Data Access
+・Plugin Development
+・Scheduled Tasks
+4.github
+https://github.com/nopSolutions/nopCommerce
+読むポイント
+・src/Presentation/Nop.Web
+・src/Libraries/Nop.Services
+・src/Libraries/Nop.Data
