@@ -1,0 +1,10 @@
+1.nopCommerce起動
+2.商品登録
+3.注文作成
+4.SQLでテーブル確認
+5.ProductServiceを読む
+6.OrderServiceを読む
+7.バックグラウンド処理（Schedule Tasks）を読む
+8.プラグイン開発を試す
+
+OrderService → Schedule Tasks → Plugin の順で読む
