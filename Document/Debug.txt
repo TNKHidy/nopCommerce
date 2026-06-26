@@ -1,0 +1,195 @@
+nopCommerce Docker環境をVS Codeでデバッグする手順
+1. ソースコード取得
+git clone https://github.com/nopSolutions/nopCommerce.git
+cd nopCommerce
+
+2. Dockerコンテナ起動
+docker compose up -d
+
+状態確認
+
+docker ps
+
+期待結果
+
+nopcommerce
+nopcommerce_database
+
+両方が Up になっていること。
+
+3. nopCommerce初回インストール
+
+ブラウザ
+
+http://localhost:8080
+
+データベース設定
+
+サーバー名      : nopcommerce_database
+データベース名  : nopCommerce
+ユーザー名      : sa
+パスワード      : docker-compose.ymlのSA_PASSWORD
+
+「データベースが存在しない場合、新たに作成」をチェック。
+
+4. SDKバージョン確認
+
+コンテナ内
+
+docker exec -it nopcommerce dotnet --list-sdks
+
+例
+
+10.0.100
+
+ローカルPCにも同じSDKをインストール。
+
+確認
+
+dotnet --list-sdks
+5. VS Code拡張機能
+
+インストール
+
+C#
+C# Dev Kit
+Docker
+6. ソースをVS Codeで開く
+code .
+
+または
+
+File
+ └ Open Folder
+
+で nopCommerce フォルダを開く。
+
+7. launch.json作成
+
+.vscode/launch.json
+
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Attach nopCommerce",
+      "type": "coreclr",
+      "request": "attach",
+      "processId": "${command:pickRemoteProcess}"
+    }
+  ]
+}
+8. vsdbgをコンテナへインストール
+
+コンテナへ入る
+
+docker exec -it nopcommerce sh
+
+インストール
+
+apk add --no-cache curl unzip
+mkdir -p /vsdbg
+curl -sSL https://aka.ms/getvsdbgsh | sh /dev/stdin -v latest -l /vsdbg
+
+確認
+
+ls /vsdbg
+
+期待結果
+
+vsdbg
+9. VS Codeからアタッチ
+
+F5
+
+↓
+
+Attach nopCommerce
+
+↓
+
+コンテナ選択
+
+nopcommerce
+
+↓
+
+プロセス選択
+
+dotnet Nop.Web.dll
+10. ブレークポイント確認
+
+例
+
+public virtual async Task<Product> GetProductByIdAsync(int productId)
+{
+    // ←ここにブレークポイント
+}
+
+管理画面や商品ページを開く。
+
+停止すれば成功。
+
+11. コンテナが落ちる場合
+
+ログ確認
+
+docker logs nopcommerce
+
+よくある原因
+
+SDK不足
+Install the .NET SDK 10.0.100
+
+対策
+
+dotnet --list-sdks
+
+でローカルSDKを合わせる。
+
+DB接続失敗
+Cannot open database requested by login
+
+対策
+
+サーバー名 = nopcommerce_database
+
+になっているか確認。
+
+12. vsdbgインストール済み確認
+docker exec -it nopcommerce sh
+find / -name vsdbg
+
+結果例
+
+/vsdbg/vsdbg
+
+表示されればOK。
+
+13. よく使うコマンド
+
+コンテナ起動
+
+docker compose up -d
+
+停止
+
+docker compose down
+
+再ビルド
+
+docker compose build --no-cache
+
+ログ確認
+
+docker logs -f nopcommerce
+
+コンテナへ入る
+
+docker exec -it nopcommerce sh
+
+DBコンテナへ入る
+
+docker exec -it nopcommerce_database bash
+
+この状態までできれば、今後は Controller → Service → Repository → SQL の流れをブレークポイントで追いながら学習 できるので、nopCommerceの解析や.NET設計の勉強がかなり進めやすくなります。
